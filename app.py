@@ -1,9 +1,15 @@
 from flask import Flask, render_template, request, redirect, session
-import sqlite3 as sql
+import mysql.connector
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.secret_key = 'fasdgfdgdfg'
 
+def get_db_connection():
+    return mysql.connector.connect(user='root', password='root', host='mysql-service', database='student_database')
 
 @app.route('/')
 def home():
@@ -22,29 +28,28 @@ def addrec():
          city = request.form['city']
          pin = request.form['pin']
          
-         with sql.connect("student_database.db") as con:
-            cur = con.cursor()
-            cur.execute("INSERT INTO students (name,addr,city,pin) VALUES (?,?,?,?)",(name,addr,city,pin) )
-            con.commit()
-            msg = "Record successfully added!"
+         con = get_db_connection()
+         cur = con.cursor()
+         cur.execute("INSERT INTO students (name,addr,city,pin) VALUES (%s,%s,%s,%s)",(name,addr,city,pin))
+         con.commit()
+         msg = "Record successfully added!"
       except:
          con.rollback()
          msg = "error in insert operation"
-      
       finally:
-         return render_template("list.html",msg = msg)
          con.close()
+         return render_template("list.html",msg = msg)
 
 @app.route('/list')
 def list():
-   con = sql.connect("student_database.db")
-   con.row_factory = sql.Row
-   
+   con = get_db_connection()
    cur = con.cursor()
-   cur.execute("select * from students")
-   
-   students = cur.fetchall();
+   cur.execute("SELECT * FROM students")
+   students = cur.fetchall()
+   logger.debug(students)
+   cur.close()
+   con.close()
    return render_template("list.html", students = students)
 
 if __name__ == '__main__':
-   app.run(debug = True)
+   app.run(debug = True, host='0.0.0.0', port=5000)

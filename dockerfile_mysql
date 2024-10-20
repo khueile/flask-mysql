@@ -1,0 +1,7 @@
+FROM mysql:latest
+WORKDIR /docker-entrypoint-initdb.d
+COPY ./init.sql /docker-entrypoint-initdb.d/
+USER root
+ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_DATABASE=student_database
+EXPOSE 3306

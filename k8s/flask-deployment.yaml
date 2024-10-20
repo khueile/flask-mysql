@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask
+  template:
+    metadata:
+      labels:
+        app: flask
+    spec:
+      containers:
+      - name: flask
+        image: docker.io/khueile/app_image:latest
+        command: ["flask", "--debug", "run", "--host=0.0.0.0"]
+        ports:
+        - containerPort: 5000
