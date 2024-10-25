@@ -116,3 +116,87 @@ replicaset.apps/mysql-deployment-cf5f8c8fd    1         1         1       147m
 ```
 
 Now we can check out the app at `http://localhost:30000/`
+
+## Method 3: Add Jenkins
+
+### 3.1: install Jenkins with Helm
+
+We need helm to install Jenkins on our cluster. To install Helm CLI, on my macbook, we used brew package manager (https://helm.sh/docs/intro/install/)
+```
+brew install helm
+```
+
+Add the Jenkins Helm Repo per this guide (https://medium.com/@viewlearnshare/setting-up-jenkins-with-helm-on-a-kubernetes-cluster-5d10458e7596)
+```
+Minhs-MacBook-Pro:flask-mysql minhkhuele$ helm repo add jenkins https://charts.jenkins.io
+"jenkins" has been added to your repositories
+Minhs-MacBook-Pro:flask-mysql minhkhuele$ helm repo list
+NAME    URL                      
+jenkins https://charts.jenkins.io
+Minhs-MacBook-Pro:flask-mysql minhkhuele$ helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "jenkins" chart repository
+Update Complete. ⎈Happy Helming!⎈
+```
+
+Install on current cluster:
+```
+Minhs-MacBook-Pro:flask-mysql minhkhuele$ helm install jenkins jenkins/jenkins
+NAME: jenkins
+LAST DEPLOYED: Wed Oct 23 14:52:20 2024
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+NOTES:
+1. Get your 'admin' user password by running:
+  kubectl exec --namespace default -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
+2. Get the Jenkins URL to visit by running these commands in the same shell:
+  echo http://127.0.0.1:8080
+  kubectl --namespace default port-forward svc/jenkins 8080:8080
+
+3. Login with the password from step 1 and the username: admin
+4. Configure security realm and authorization strategy
+5. Use Jenkins Configuration as Code by specifying configScripts in your values.yaml file, see documentation: http://127.0.0.1:8080/configuration-as-code and examples: https://github.com/jenkinsci/configuration-as-code-plugin/tree/master/demos
+
+For more information on running Jenkins on Kubernetes, visit:
+https://cloud.google.com/solutions/jenkins-on-container-engine
+
+For more information about Jenkins Configuration as Code, visit:
+https://jenkins.io/projects/jcasc/
+
+
+NOTE: Consider using a custom image with pre-installed plugins
+Minhs-MacBook-Pro:flask-mysql minhkhuele$ 
+```
+Follow step 1 through 3 (not 4 and 5 though yet). 
+
+
+### 3.2: Installing and configuring the GitHub plugin in Jenkins
+
+We need the github plugin to help trigger jenkins pipeline whenever there's a change in the repo.
+
+To install and configure the plugin, we follow step 2 of this guide (https://medium.com/@sangeetv09/how-to-configure-webhook-in-github-and-jenkins-for-automatic-trigger-with-cicd-pipeline-34133e9de0ea)
+
+> Go to the Jenkins dashboard, select Manage Jenkins, and then select Manage Plugins to install the GitHub plugin. Look for the “GitHub plugin” under the Available tab and install it.
+>
+> After installation, the plugin needs to be configured. Go to Manage Jenkins > Configure System and scroll down to the GitHub section to accomplish this.
+
+### 3.3: Create the pipeline
+Now we start configuring our pipeline.
+
+(I used this post as guidance: https://medium.com/@mudasirhaji/complete-step-by-step-jenkins-cicd-with-github-integration-aae3961b6e33, specifically the portion about github configuration at Step 3: Start Using Jenkins)
+
+1. On Jenkins home page, choose `New Item`.
+![](pics/1_new_item.png)
+2. Pick the `Pipeline` option, then input the name. In this case I input `flaskapp`.
+![](pics/2_name_freestyle_project.png)
+3. Under Build Triggers, check the box for `Poll SCM` and input `H/15 * * * *` to the schedule. 
+4. Under `Source Code Management`, input the url to our git repo 
+![](pics/3_git_repo.png)
+5. Then under `Credentials`, chose `Add` then `Jenkins` to add credentials. In this case I used `SSH Username with Private Key`, then entered a key I already am using for github access
+![](pics/4_ssh_private_key.png)
+6. Under `Branches to build`, input `*/main`
+7. Save.
+
+
+
