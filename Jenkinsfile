@@ -10,6 +10,9 @@ pipeline {
 
     stages {
         stage('Checkout') {
+            when {
+                branch 'main'
+            }
             steps {
                 git branch: 'main', url: 'https://github.com/your-repo/flask-mysql.git'
             }
