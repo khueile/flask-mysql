@@ -181,7 +181,9 @@ To install and configure the plugin, we follow step 2 of this guide (https://med
 >
 > After installation, the plugin needs to be configured. Go to Manage Jenkins > Configure System and scroll down to the GitHub section to accomplish this.
 
-### 3.3: Create the pipeline
+### 3.3: Installing and configuring the Docker pipeline plugin in Jenkins
+
+### 3.4: Create the pipeline
 Now we start configuring our pipeline.
 
 (I used this post as guidance: https://medium.com/@mudasirhaji/complete-step-by-step-jenkins-cicd-with-github-integration-aae3961b6e33, specifically the portion about github configuration at Step 3: Start Using Jenkins)
