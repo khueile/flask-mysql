@@ -5,6 +5,7 @@ pipeline {
     // }
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker_hub_credentials_id')
+        GITHUB_CREDENTIALS = credentials('id_rsa_github_personal')
         DOCKER_HUB_ACC = 'khueile'
         APP_IMAGE = 'app_image'
         MYSQL_IMAGE = 'mysql_image'

@@ -52,7 +52,7 @@ println "Job $jobName created successfully."
 
 
 def privateKey = new File('/var/jenkins_home/init.groovy.d/id_rsa_github_personal').text
-def credentials = new BasicSSHUserPrivateKey(
+def githubCredentials = new BasicSSHUserPrivateKey(
     CredentialsScope.GLOBAL,
     'id_rsa_github_personal',  // Credential ID
     'khueile',         // Username
@@ -61,6 +61,16 @@ def credentials = new BasicSSHUserPrivateKey(
     'SSH Key for Deployment' // Description
 )
 
+def pass = new File('/var/jenkins_home/init.groovy.d/pass').text.trim()
+def dockerhubCredentials = new UsernamePasswordCredentialsImpl(
+    CredentialsScope.GLOBAL,
+    "docker_hub_credentials_id", // ID
+    "user + pass for ", // Description
+    "le_k1@denison.edu", // Username
+    pass // Password
+)
+
 def domain = Domain.global()
 def store = instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0].getStore()
-store.addCredentials(domain, credentials)
+store.addCredentials(domain, githubCredentials)
+store.addCredentials(domain, dockerhubCredentials)
