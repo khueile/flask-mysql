@@ -23,7 +23,7 @@ pipeline {
                 }
             }
         }
-        // stage('Push App Image') {
+        // stage('Push App Image 1') {
         //     steps {
         //         script {
         //             docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS) {
@@ -32,6 +32,15 @@ pipeline {
         //         }
         //     }
         // }
+        stage('Push App Image 2') {
+            steps {
+                script {
+                    withDockerRegistry([credentialsId: 'docker_hub_credentials_id', url: 'https://index.docker.io/v1/']) {
+                        sh 'docker push khueile/app_image:latest'
+                    }
+                }
+            }
+        }
         // stage('Test') {
         //     steps {
         //         echo 'Testing...'
