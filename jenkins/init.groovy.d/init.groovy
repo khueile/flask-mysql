@@ -62,12 +62,13 @@ def githubCredentials = new BasicSSHUserPrivateKey(
 )
 
 def pass = new File('/var/jenkins_home/init.groovy.d/pass').text.trim()
+// Create the Docker Hub credentials object
 def dockerhubCredentials = new UsernamePasswordCredentialsImpl(
     CredentialsScope.GLOBAL,
     "docker_hub_credentials_id", // ID
-    "user + pass for ", // Description
-    "le_k1@denison.edu", // Username
-    pass // Password
+    "user + pass",               // Description
+    "le_k1@denison.edu",         // Username
+    pass                         // Password
 )
 
 def domain = Domain.global()
