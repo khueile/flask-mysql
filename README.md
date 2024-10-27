@@ -171,19 +171,12 @@ Minhs-MacBook-Pro:flask-mysql minhkhuele$
 Follow step 1 through 3 (not 4 and 5 though yet). 
 
 
-### 3.2: Installing and configuring the GitHub plugin in Jenkins
+### 3.2: Installing and configuring plugins in Jenkins
 
-We need the github plugin to help trigger jenkins pipeline whenever there's a change in the repo.
+We need the github plugin to help trigger jenkins pipeline whenever there's a change in the repo, as well as docker pipeline plugin to build and push docker images to docker hub.
 
-To install and configure the plugin, we follow step 2 of this guide (https://medium.com/@sangeetv09/how-to-configure-webhook-in-github-and-jenkins-for-automatic-trigger-with-cicd-pipeline-34133e9de0ea)
 
-> Go to the Jenkins dashboard, select Manage Jenkins, and then select Manage Plugins to install the GitHub plugin. Look for the “GitHub plugin” under the Available tab and install it.
->
-> After installation, the plugin needs to be configured. Go to Manage Jenkins > Configure System and scroll down to the GitHub section to accomplish this.
-
-### 3.3: Installing and configuring the Docker pipeline plugin in Jenkins
-
-### 3.4: Create the pipeline
+### 3.3: Create the pipeline
 Now we start configuring our pipeline.
 
 (I used this post as guidance: https://medium.com/@mudasirhaji/complete-step-by-step-jenkins-cicd-with-github-integration-aae3961b6e33, specifically the portion about github configuration at Step 3: Start Using Jenkins)

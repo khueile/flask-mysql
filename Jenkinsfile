@@ -10,19 +10,6 @@ pipeline {
         MYSQL_IMAGE = 'mysql_image'
     }
     stages {
-        stage('Install Docker') {
-            steps {
-                script {
-                    sh '''
-                    # Install Docker
-                    curl -fsSL https://get.docker.com -o get-docker.sh
-                    sudo sh get-docker.sh
-                    # Start Docker service
-                    sudo service docker start
-                    '''
-                }
-            }
-        }
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/khueile/flask-mysql'
@@ -31,8 +18,7 @@ pipeline {
         stage('Build App Image') {
             steps {
                 script {
-                    sh 'docker build -t ${APP_IMAGE} -f dockerfile_app .'
-                    sh 'docker tag ${APP_IMAGE} ${DOCKER_HUB_ACC}/${APP_IMAGE}:latest'
+                    appImage = docker.build("${DOCKER_HUB_ACC}/${APP_IMAGE}:latest", "-f dockerfile_app .")
                 }
             }
         }
@@ -40,7 +26,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS) {
-                        sh 'docker push ${DOCKER_HUB_ACC}/${APP_IMAGE}:latest'
+                        appImage.push()
                     }
                 }
             }
