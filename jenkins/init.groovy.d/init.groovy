@@ -57,12 +57,11 @@ def githubCredentials = new BasicSSHUserPrivateKey(
     'id_rsa_github_personal',  // Credential ID
     'khueile',         // Username
     new BasicSSHUserPrivateKey.DirectEntryPrivateKeySource(privateKey),
-    '',                      // Passphrase (if any)
+    '',                      // Passphrase
     'SSH Key for Deployment' // Description
 )
 
 def pass = new File('/var/jenkins_home/init.groovy.d/pass').text.trim()
-// Create the Docker Hub credentials object
 def dockerhubCredentials = new UsernamePasswordCredentialsImpl(
     CredentialsScope.GLOBAL,
     "docker_hub_credentials_id", // ID
