@@ -1,11 +1,19 @@
-# flask-mysql
+# Pipeline report
+
+Repo of app and pipeline: https://github.com/khueile/flask-mysql 
+Go to the link above to read this same report (readme.md) but with working link connected to appropriate files.
 
 This repo can be used to prop up a 2-tier simple web application. The logic, as well as basic html interfacing, is handled by Flask. It interacts with a MySQL database (`student_database`) that has one table (`students`) in it to store student data.
 
-Here are a few ways to go about propping this application up, with increasingly more complicated CICD wrangling, for educational purposes. 
+Here are a few stages I went through to prop this application up, with increasingly more complicated CICD wrangling per stages.
 
-## Method 0: Rawdogging it
-This part is purely for record-keeping. The database has been replaced by mysql from the original sqlite, so this method no longer works.
+## Stage 0: Base app, no pipeline, no docker
+First I want to show how the application works out of the box with no changes. 
+
+Originally, the repo is forked from [here](https://github.com/kshyam/flask-with-sqlite). It's a crud flask application with a simple sqlite db attached that has one table in it.
+
+By the time you're reading this report, that sqlite in the original set up has been replaced by mysql to create a more defined 2-tier architecture, so the following code in this stage no longer works. The following pics that shows the site features are still applicable in all later stages.
+
 Set up a virtual env with specific requirements
 ```
 cd flask-mysql
@@ -21,16 +29,28 @@ Check things out on your browser at
 ```
 http://localhost:5000/
 ```
+You can see the home page
+![](pics/base/1_home.png)
+Click on `Add New Student` to get to this page. Let's fill out some random info too.
+![](pics/base/2_add_student.png)
+After clicking `submit`, you should see this page
+![](pics/base/3_success_add.png)
+Click on `List Student`. You should see the info you just input in the list of students:
+![](pics/base/4_list.png)
 
-## Method 1: Pure docker
+## Stage 1: Contanerize with Docker
 We rely on 2 containers here, one for the flask app and one for the mysql database.
 
-Build the 2 images
+Dockerfiles for the app and db are at [`dockerfile_app`](dockerfile_app) and [`dockerfile_mysql`](dockerfile_mysql). `dockerfile_app` sets up a Docker container for a Flask application using a python base image. `dockerfile_mysql` is the db part.
+
+To build the 2 images
 ```
 cd flask-mysql
 docker build -t mysql_image -f dockerfile_mysql .
 docker build -t app_image -f dockerfile_app .
 ```
+
+Skip to stage 2 if you want a better way to run these containers with Kubernetes. The following rest of stage 1 shows how to run the containers with only docker, which is not efficient and for record-keeping only:
 
 Create the network for the 2 containers to live on and interract with each other
 ```
@@ -55,28 +75,32 @@ You can also checkout the content of mysql database container by doing
 docker exec -it mysql_container mysql -uroot -proot
 ```
 
-## Method 2: Add Kubernetes
-The application will now consist of 2 deployments and 2 services:
+## Stage 2: Add Kubernetes
+After adding the .yaml files, the application will now consist of 2 deployments and 2 services:
 - flask-deployment for the flask app
 - mysql-deployment for the mysql database
 - flask-service is a NodePort service that exposes the flask-deployment to allow us to interact with the Flask application from outside the cluster
 - mysql-service is a ClusterIP service that allows the flask app side to read from and write to mysql side.
 
-Create the cluster:
+Note: At this point, I found that Docker, Docker Desktop, Docker Hub all integrate super well with each other, so I ended up just going with these tools for Kubernetes cluster set up and hosting images, instead of minikube and jfrog. 
+
+To create the cluster on MacOS host:
 - Download Docker Desktop
 - Open Docker Desktop > Preferences > Kubernetes
 - Choose Enable Kubernetes
 - Choose Apply and restart
 
-Install kubectl: On my macbook it's `brew install kubectl`. After confirming it's working, check to use docker-desktop cluster:
+Install kubectl: On macbook host, use brew package manager: `brew install kubectl`. After confirming it's working, configure to use docker-desktop cluster:
 ```
 kubectl config use-context docker-desktop
 ```
 
 The 2 deployments are created using images from `dockerfile_app` and `dockerfile_mysql`.
-We have set up 2 repo on docker hub to store these images: 
-https://hub.docker.com/repository/docker/khueile/app_image/general
-https://hub.docker.com/repository/docker/khueile/mysql_image/general
+We have set up 2 repo on docker hub to store these images:
+
+- [app_image](https://hub.docker.com/repository/docker/khueile/app_image/general)
+- [mysql_image](https://hub.docker.com/repository/docker/khueile/mysql_image/general)
+
 Here's how to build, tag, and push the 2 images to docker hub:
 
 ```
@@ -115,9 +139,10 @@ replicaset.apps/flask-deployment-67f9dddddf   1         1         1       107m
 replicaset.apps/mysql-deployment-cf5f8c8fd    1         1         1       147m
 ```
 
-Now we can check out the app at `http://localhost:30000/`
+Now we can check out the app at `http://localhost:30000/`. Refer to stage 0 documentation for how to use the app.
 
-## Method 3: Add Jenkins
+## Stage 3: Add manual Jenkins config (Skip to stage 4 for same pipeline  + creds but automated setup with init.groovy)
+Please skip to stage 4 to see use of `init.groovy` to automate setting up jenkins pipeline job + credentials. This stage 3 doc below is just for record keeping.
 
 ### 3.1: install Jenkins with Helm
 
@@ -166,14 +191,13 @@ https://jenkins.io/projects/jcasc/
 
 
 NOTE: Consider using a custom image with pre-installed plugins
-Minhs-MacBook-Pro:flask-mysql minhkhuele$ 
 ```
-Follow step 1 through 3 (not 4 and 5 though yet). 
+Follow step 1 through 3 (not 4 and 5 though yet, go to stage 4 for that). 
 
 
 ### 3.2: Installing and configuring plugins in Jenkins
 
-We need the github plugin to help trigger jenkins pipeline whenever there's a change in the repo, as well as docker pipeline plugin to build and push docker images to docker hub.
+We need the `git` and `github` plugin to help trigger jenkins pipeline whenever there's a change in the repo, as well as docker pipeline `docker-workflow` plugin to build and push docker images to docker hub.
 
 
 ### 3.3: Create the pipeline
@@ -182,17 +206,48 @@ Now we start configuring our pipeline.
 (I used this post as guidance: https://medium.com/@mudasirhaji/complete-step-by-step-jenkins-cicd-with-github-integration-aae3961b6e33, specifically the portion about github configuration at Step 3: Start Using Jenkins)
 
 1. On Jenkins home page, choose `New Item`.
-![](pics/1_new_item.png)
+![](pics/jenkins/1_new_item.png)
 2. Pick the `Pipeline` option, then input the name. In this case I input `flaskapp`.
-![](pics/2_name_freestyle_project.png)
+![](pics/jenkins/2_name_freestyle_project.png)
 3. Under Build Triggers, check the box for `Poll SCM` and input `H/15 * * * *` to the schedule. 
 4. Under `Source Code Management`, input the url to our git repo 
-![](pics/3_git_repo.png)
+![](pics/jenkins/3_git_repo.png)
 5. Then under `Credentials`, chose `Add` then `Jenkins` to add credentials. In this case I used `SSH Username with Private Key`, then entered a key I already am using for github access
-![](pics/4_ssh_private_key.png)
+![](pics/jenkins/4_ssh_private_key.png)
 6. Under `Branches to build`, input `*/main`
 7. Save.
 
-askjyobljpp
+### 3.4: Jenkinsfile
+Check out the Jenkinsfile for the precise instruction. Generally, the steps mirror commands used in stage 1 to build and push docker containers to docker hub:
+- Checkout the repo if scm polling detects changes in main branch
+- Build app image with docker
+- Push app image to docker hub
+
+## Stage 4: Automate Jenkins pipeline job setup
+### 4.1: Jenkins Setup
+Under `jenkins/init.groovy.d`, create 2 files:
+- `id_rsa_github_personal`: contains private ssh key that's already configured in github to clone repo.
+- `pass`: contains the password to docker hub account
+
+Then, using this [dockerfile](jenkins/dockerfile), spin up a docker container that is a modified version of Jenkins with all needed plugins (`docker-workflow`, `git`, etc.) already installed as following:
+```
+cd jenkins
+docker build -t jenkins-devops .
+docker run -p 8080:8080 -p 50000:50000 --restart=on-failure -v jenkins_home:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkins-devops
+```
+Open jenkins on localhost:8080 and you should see this screen:
+![](pics/jenkins_automated/1_home.png)
+Note that the pipeline `flask-mysql-pipeline` is already configured automatically.
+This is what the pipeline looks like when it's executed successfully.
+![](pics/jenkins_automated/2_success.png)
+The pipeline job and related credentials are already configured by the [groovy.init](jenkins/init.groovy.d/init.groovy) script. Specifically, the script sets up the pipeline job, the scm polling, and docker hub and github credentials needed for the pipeline to work.
+
+### 4.2: Console output:
+The console output text could be found [here](jenkins_success_console_output.txt). Here are some pics for proof:
+![](pics/jenkins_automated/4_success.png)
+![](pics/jenkins_automated/5_success.png)
+![](pics/jenkins_automated/6_success.png)
+![](pics/jenkins_automated/7_success.png)
 
 
+Stage 5: ArgoCD

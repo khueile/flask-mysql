@@ -23,16 +23,7 @@ pipeline {
                 }
             }
         }
-        // stage('Push App Image 1') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS) {
-        //                 appImage.push()
-        //             }
-        //         }
-        //     }
-        // }
-        stage('Push App Image 2') {
+        stage('Push App Image') {
             steps {
                 script {
                     withDockerRegistry([credentialsId: 'docker_hub_credentials_id', url: 'https://index.docker.io/v1/']) {
@@ -41,15 +32,5 @@ pipeline {
                 }
             }
         }
-        // stage('Test') {
-        //     steps {
-        //         echo 'Testing...'
-        //     }
-        // }
-        // stage('Deploy') {
-        //     steps {
-        //         echo 'Deploying...'
-        //     }
-        // }
     }
 }

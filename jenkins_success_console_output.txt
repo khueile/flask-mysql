@@ -1,0 +1,230 @@
+Started by an SCM change
+Checking out git https://github.com/khueile/flask-mysql.git into /var/jenkins_home/workspace/flask-mysql-pipeline@script/a480f6bf14a9ead5973af3281ff11c5356aea4391263c1132fb8df804f544eee to read Jenkinsfile
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/flask-mysql-pipeline@script/a480f6bf14a9ead5973af3281ff11c5356aea4391263c1132fb8df804f544eee/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/khueile/flask-mysql.git # timeout=10
+Fetching upstream changes from https://github.com/khueile/flask-mysql.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.39.5'
+ > git fetch --tags --force --progress -- https://github.com/khueile/flask-mysql.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision e2c1ceacf659f65f63aa58da938e02568d40a5e4 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f e2c1ceacf659f65f63aa58da938e02568d40a5e4 # timeout=10
+Commit message: "test2"
+First time build. Skipping changelog.
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/flask-mysql-pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/flask-mysql-pipeline/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/khueile/flask-mysql.git # timeout=10
+Fetching upstream changes from https://github.com/khueile/flask-mysql.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.39.5'
+ > git fetch --tags --force --progress -- https://github.com/khueile/flask-mysql.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision e2c1ceacf659f65f63aa58da938e02568d40a5e4 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f e2c1ceacf659f65f63aa58da938e02568d40a5e4 # timeout=10
+Commit message: "test2"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withCredentials
+Masking supported pattern matches of $GITHUB_CREDENTIALS or $GITHUB_CREDENTIALS_PSW
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/flask-mysql-pipeline/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/khueile/flask-mysql # timeout=10
+Fetching upstream changes from https://github.com/khueile/flask-mysql
+ > git --version # timeout=10
+ > git --version # 'git version 2.39.5'
+ > git fetch --tags --force --progress -- https://github.com/khueile/flask-mysql +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision e2c1ceacf659f65f63aa58da938e02568d40a5e4 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f e2c1ceacf659f65f63aa58da938e02568d40a5e4 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main e2c1ceacf659f65f63aa58da938e02568d40a5e4 # timeout=10
+Commit message: "test2"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build App Image)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker build -t khueile/app_image:latest -f dockerfile_app .
+#1 [internal] load build definition from dockerfile_app
+#1 sha256:71b5935cbaada3830da7339f0d8ac81b3f69e28cbfda05bdfe2756d8fa01f41e
+#1 transferring dockerfile: 196B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load .dockerignore
+#2 sha256:dadf39441a25126726d295e63d80f3f28af9b2b7c528010ec1fad9cb1b2699d7
+#2 transferring context: 2B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12
+#3 sha256:36e2c455b1b565127e04502006ec81799d2000c65da49d843f1d8e154f29a3ee
+#3 DONE 0.6s
+
+#4 [1/4] FROM docker.io/library/python:3.12@sha256:b52e97a85736bc3a6bfb081ec3f2a5b828233120b2138080af1761e504b06529
+#4 sha256:a16b692236d1c0058871bfe61df380e72f7121cf3ab7390b1e96810716295f48
+#4 DONE 0.0s
+
+#6 [internal] load build context
+#6 sha256:4cec06b925e8a821ce208fa5479a698a0ea3d41e86c321881d5f0822b6e66089
+#6 transferring context: 16.71MB 0.4s done
+#6 DONE 0.4s
+
+#5 [2/4] WORKDIR /app
+#5 sha256:edec2574d860a455cc2424751cb87085eae1f222aa6ff716c5876d519fcf4a41
+#5 CACHED
+
+#7 [3/4] ADD . /app
+#7 sha256:1c23b043b16815c0b5ceb6e57ce76bab45445dc4e22ef4e6539bc832df0032d1
+#7 DONE 0.2s
+
+#8 [4/4] RUN pip install --no-cache-dir -r requirements.txt
+#8 sha256:847bfa28eb1d396a51075aa6c3cd92671f5c432a805dd37364d9c636d66e0551
+#8 2.228 Collecting flask (from -r requirements.txt (line 1))
+#8 2.476   Downloading flask-3.0.3-py3-none-any.whl.metadata (3.2 kB)
+#8 2.538 Collecting flask_sqlalchemy (from -r requirements.txt (line 2))
+#8 2.596   Downloading flask_sqlalchemy-3.1.1-py3-none-any.whl.metadata (3.4 kB)
+#8 2.720 Collecting mysql-connector-python (from -r requirements.txt (line 3))
+#8 2.790   Downloading mysql_connector_python-9.1.0-cp312-cp312-manylinux_2_28_aarch64.whl.metadata (6.0 kB)
+#8 2.851 Collecting Werkzeug>=3.0.0 (from flask->-r requirements.txt (line 1))
+#8 2.891   Downloading werkzeug-3.0.6-py3-none-any.whl.metadata (3.7 kB)
+#8 2.957 Collecting Jinja2>=3.1.2 (from flask->-r requirements.txt (line 1))
+#8 3.004   Downloading jinja2-3.1.4-py3-none-any.whl.metadata (2.6 kB)
+#8 3.053 Collecting itsdangerous>=2.1.2 (from flask->-r requirements.txt (line 1))
+#8 3.094   Downloading itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+#8 3.172 Collecting click>=8.1.3 (from flask->-r requirements.txt (line 1))
+#8 3.219   Downloading click-8.1.7-py3-none-any.whl.metadata (3.0 kB)
+#8 3.286 Collecting blinker>=1.6.2 (from flask->-r requirements.txt (line 1))
+#8 3.326   Downloading blinker-1.8.2-py3-none-any.whl.metadata (1.6 kB)
+#8 3.659 Collecting sqlalchemy>=2.0.16 (from flask_sqlalchemy->-r requirements.txt (line 2))
+#8 3.712   Downloading SQLAlchemy-2.0.36-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (9.7 kB)
+#8 3.800 Collecting MarkupSafe>=2.0 (from Jinja2>=3.1.2->flask->-r requirements.txt (line 1))
+#8 3.849   Downloading MarkupSafe-3.0.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (4.0 kB)
+#8 3.909 Collecting typing-extensions>=4.6.0 (from sqlalchemy>=2.0.16->flask_sqlalchemy->-r requirements.txt (line 2))
+#8 3.944   Downloading typing_extensions-4.12.2-py3-none-any.whl.metadata (3.0 kB)
+#8 4.166 Collecting greenlet!=0.4.17 (from sqlalchemy>=2.0.16->flask_sqlalchemy->-r requirements.txt (line 2))
+#8 4.209   Downloading greenlet-3.1.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (3.8 kB)
+#8 4.268 Downloading flask-3.0.3-py3-none-any.whl (101 kB)
+#8 4.426 Downloading flask_sqlalchemy-3.1.1-py3-none-any.whl (25 kB)
+#8 4.482 Downloading mysql_connector_python-9.1.0-cp312-cp312-manylinux_2_28_aarch64.whl (34.1 MB)
+#8 10.64    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 34.1/34.1 MB 5.5 MB/s eta 0:00:00
+#8 10.69 Downloading blinker-1.8.2-py3-none-any.whl (9.5 kB)
+#8 10.77 Downloading click-8.1.7-py3-none-any.whl (97 kB)
+#8 10.82 Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+#8 10.86 Downloading jinja2-3.1.4-py3-none-any.whl (133 kB)
+#8 10.92 Downloading SQLAlchemy-2.0.36-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (3.2 MB)
+#8 11.51    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.2/3.2 MB 5.4 MB/s eta 0:00:00
+#8 11.56 Downloading werkzeug-3.0.6-py3-none-any.whl (227 kB)
+#8 11.64 Downloading greenlet-3.1.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (649 kB)
+#8 11.74    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 649.1/649.1 kB 7.1 MB/s eta 0:00:00
+#8 11.79 Downloading MarkupSafe-3.0.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (24 kB)
+#8 11.83 Downloading typing_extensions-4.12.2-py3-none-any.whl (37 kB)
+#8 11.90 Installing collected packages: typing-extensions, mysql-connector-python, MarkupSafe, itsdangerous, greenlet, click, blinker, Werkzeug, sqlalchemy, Jinja2, flask, flask_sqlalchemy
+#8 14.57 Successfully installed Jinja2-3.1.4 MarkupSafe-3.0.2 Werkzeug-3.0.6 blinker-1.8.2 click-8.1.7 flask-3.0.3 flask_sqlalchemy-3.1.1 greenlet-3.1.1 itsdangerous-2.2.0 mysql-connector-python-9.1.0 sqlalchemy-2.0.36 typing-extensions-4.12.2
+#8 14.57 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#8 14.86 
+#8 14.86 [notice] A new release of pip is available: 24.2 -> 24.3.1
+#8 14.86 [notice] To update, run: pip install --upgrade pip
+#8 DONE 15.3s
+
+#9 exporting to image
+#9 sha256:e8c613e07b0b7ff33893b694f7759a10d42e180f2b4dc349fb57dc6b71dcab00
+#9 exporting layers
+#9 exporting layers 0.5s done
+#9 writing image sha256:c7e4b2c134e5fd7ff8425b6a08a5903d9c9880c18bd39af145f72295f72a5025 done
+#9 naming to docker.io/khueile/app_image:latest
+#9 naming to docker.io/khueile/app_image:latest done
+#9 DONE 0.6s
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push App Image 2)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] withDockerRegistry
+$ docker login -u le_k1@denison.edu -p ******** https://index.docker.io/v1/
+WARNING! Using --password via the CLI is insecure. Use --password-stdin.
+WARNING! Your password will be stored unencrypted in /var/jenkins_home/workspace/flask-mysql-pipeline@tmp/79f45d3c-f2f4-4cac-aaa1-8f388c1b7b57/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+[Pipeline] {
+[Pipeline] sh
++ docker push khueile/app_image:latest
+The push refers to repository [docker.io/khueile/app_image]
+c732a36d6f6f: Preparing
+68822cb9fbe0: Preparing
+88f24f3fba9d: Preparing
+5215ed437036: Preparing
+a91c4344dec4: Preparing
+4a5f18b2b537: Preparing
+a2b8ce9d73a5: Preparing
+59c47e88439d: Preparing
+afc6ebde4174: Preparing
+5968baa45665: Preparing
+a2b8ce9d73a5: Waiting
+59c47e88439d: Waiting
+afc6ebde4174: Waiting
+5968baa45665: Waiting
+4a5f18b2b537: Waiting
+5215ed437036: Layer already exists
+88f24f3fba9d: Layer already exists
+a91c4344dec4: Layer already exists
+4a5f18b2b537: Layer already exists
+59c47e88439d: Layer already exists
+a2b8ce9d73a5: Layer already exists
+afc6ebde4174: Layer already exists
+5968baa45665: Layer already exists
+68822cb9fbe0: Pushed
+c732a36d6f6f: Pushed
+latest: digest: sha256:c4b895da6ddb3c77b4d3b20b02d527a59aa3bdaa8f178863dcbf4d3b2d391d07 size: 2426
+[Pipeline] }
+[Pipeline] // withDockerRegistry
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
