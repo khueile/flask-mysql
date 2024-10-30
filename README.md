@@ -1,14 +1,14 @@
 # Pipeline report
 
 Repo of app and pipeline: https://github.com/khueile/flask-mysql 
-Go to the link above to read this same report (readme.md) but with working link connected to appropriate files.
-
-This repo can be used to prop up a 2-tier simple web application. The logic, as well as basic html interfacing, is handled by Flask. It interacts with a MySQL database (`student_database`) that has one table (`students`) in it to store student data.
+**Go to the link above to read this same report (readme.md) but with working links connected to appropriate files and visuals.**
 
 Here are the stages I went through to prop this application up, **with increasingly more complicated CICD wrangling per stages**.
 
 ## Stage 0: Base app, no pipeline, no docker
-First I want to show how the application works out of the box with no changes. 
+First I want to show how the application works out of the box with no changes.
+
+This repo can be used to prop up a 2-tier simple web application. The logic, as well as basic html interfacing, is handled by Flask. It interacts with a MySQL database (`student_database`) that has one table (`students`) in it to store student data.
 
 Originally, the repo is forked from [here](https://github.com/kshyam/flask-with-sqlite). It's a crud flask application with a simple sqlite db attached that has one table in it.
 
