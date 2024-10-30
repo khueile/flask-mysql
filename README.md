@@ -271,11 +271,13 @@ Port forward to allow us to check the UI locally:
 ```
 kubectl port-forward svc/argocd-server -n argocd 10000:443
 ```
-Check out the UI at `localhost:10000`. Username is `admin`, and password is as following:
+Check out the UI at `localhost:10000`.
+![](pics/argocd/2.png)
+Username is `admin`, and password is as following:
 ```
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode ; echo
 ```
 You should see something like this:
-![](pics/argocd/1.png)
+![](pics/argocd/3.png)
 Choose `NEW APP` > `EDIT AS YAML`, then paste the `manifest.yaml` in this repo to it. If all goes well, this would show up:
 ![](pics/argocd/1.png)
