@@ -5,7 +5,7 @@ Go to the link above to read this same report (readme.md) but with working link 
 
 This repo can be used to prop up a 2-tier simple web application. The logic, as well as basic html interfacing, is handled by Flask. It interacts with a MySQL database (`student_database`) that has one table (`students`) in it to store student data.
 
-Here are a few stages I went through to prop this application up, with increasingly more complicated CICD wrangling per stages.
+Here are the stages I went through to prop this application up, **with increasingly more complicated CICD wrangling per stages**.
 
 ## Stage 0: Base app, no pipeline, no docker
 First I want to show how the application works out of the box with no changes. 
@@ -76,13 +76,13 @@ docker exec -it mysql_container mysql -uroot -proot
 ```
 
 ## Stage 2: Add Kubernetes
-After adding the .yaml files, the application will now consist of 2 deployments and 2 services:
+After adding the .yaml files under k8s directory, the application will now consist of 2 deployments and 2 services:
 - flask-deployment for the flask app
 - mysql-deployment for the mysql database
 - flask-service is a NodePort service that exposes the flask-deployment to allow us to interact with the Flask application from outside the cluster
 - mysql-service is a ClusterIP service that allows the flask app side to read from and write to mysql side.
 
-Note: At this point, I found that Docker, Docker Desktop, Docker Hub all integrate super well with each other, so I ended up just going with these tools for Kubernetes cluster set up and hosting images, instead of minikube and jfrog. 
+Note: At this point, I found that Docker, Docker Desktop, Docker Hub all integrate super well with each other, so I ended up just going with these tools for Kubernetes cluster set up and hosting images, instead of minikube and jfrog's artifactory. 
 
 To create the cluster on MacOS host:
 - Download Docker Desktop
@@ -141,7 +141,7 @@ replicaset.apps/mysql-deployment-cf5f8c8fd    1         1         1       147m
 
 Now we can check out the app at `http://localhost:30000/`. Refer to stage 0 documentation for how to use the app.
 
-## Stage 3: Add manual Jenkins config (Skip to stage 4 for same pipeline  + creds but automated setup with init.groovy)
+## ~~Stage 3: Add manual Jenkins config~~ Skip this stage, go to stage 4 for exact same pipeline  + creds but automated setup with init.groovy
 Please skip to stage 4 to see use of `init.groovy` to automate setting up jenkins pipeline job + credentials. This stage 3 doc below is just for record keeping.
 
 ### 3.1: install Jenkins with Helm
@@ -249,5 +249,33 @@ The console output text could be found [here](jenkins_success_console_output.txt
 ![](pics/jenkins_automated/6_success.png)
 ![](pics/jenkins_automated/7_success.png)
 
+Check out the Jenkinsfile for the precise instruction. Generally, the steps mirror commands used in stage 1 to build and push docker containers to docker hub:
+- Checkout the repo if scm polling detects changes in main branch
+- Build app image with docker
+- Push app image to docker hub
 
-Stage 5: ArgoCD
+## Stage 5: ArgoCD
+
+![](pics/argocd/1.png)
+
+Command to set up argocd:
+```
+kubectl create ns argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+Check for success setup
+```
+kubectl get all -n argocd
+```
+Port forward to allow us to check the UI locally:
+```
+kubectl port-forward svc/argocd-server -n argocd 10000:443
+```
+Check out the UI at `localhost:10000`. Username is `admin`, and password is as following:
+```
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode ; echo
+```
+You should see something like this:
+![](pics/argocd/1.png)
+Choose `NEW APP` > `EDIT AS YAML`, then paste the `manifest.yaml` in this repo to it. If all goes well, this would show up:
+![](pics/argocd/1.png)
